@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>受注DX 提案ページ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #05060a;
+      --bg-soft: #0c0f18;
+      --card: #0f121c;
+      --text: #f7f7f7;
+      --muted: #a0a4b5;
+      --accent: #4fd1c5;
+      --accent-soft: rgba(79, 209, 197, 0.12);
+      --border-subtle: rgba(255, 255, 255, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue",
+        "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 0% 0%, #283042 0, transparent 50%),
+        radial-gradient(circle at 100% 0%, #161c27 0, transparent 55%),
+        var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    /* 全体レイアウト */
+    .page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .shell {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px 20px 80px;
+    }
+
+    /* ヘッダー（ロゴっぽいバー） */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-mark {
+      width: 22px;
+      height: 22px;
+      border-radius: 8px;
+      background: radial-gradient(circle at 30% 0, #c4fff4 0, var(--accent) 40%, #1b4950 100%);
+      box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.8),
+        0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .brand-text-main {
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.82rem;
+    }
+
+    .brand-text-sub {
+      opacity: 0.68;
+    }
+
+    .tagline {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(0, 0, 0, 0.35);
+    }
+
+    /* ヒーローセクション */
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.6fr);
+      gap: 32px;
+      margin-bottom: 72px;
+      align-items:center;
+    }
+
+    .hero-kicker {
+      font-size: 0.9rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .hero-title {
+      font-size: clamp(2.1rem, 4vw, 2.9rem);
+      line-height: 1.2;
+      margin: 0 0 14px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(120deg, #e7fff9, var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-sub {
+      font-size: 0.98rem;
+      color: var(--muted);
+      margin-bottom: 22px;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 26px;
+    }
+
+    .hero-pill {
+      font-size: 0.82rem;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--muted);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .btn-primary {
+      padding: 10px 18px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent), #7be4da);
+      color: #041016;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow:
+        0 10px 26px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(0, 0, 0, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition:
+        transform 140ms ease,
+        box-shadow 140ms ease,
+        filter 140ms ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.06);
+      box-shadow:
+        0 14px 36px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn-ghost {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(0, 0, 0, 0.35);
+      color: var(--muted);
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition:
+        background 140ms ease,
+        border-color 140ms ease,
+        color 140ms ease;
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.02);
+      border-color: rgba(255, 255, 255, 0.16);
+      color: #d5d7e4;
+    }
+
+    .hero-visual {
+      position: relative;
+      padding: 18px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 0 0, rgba(80, 255, 208, 0.18), transparent 55%),
+        radial-gradient(circle at 100% 0, rgba(102, 152, 255, 0.22), transparent 55%),
+        var(--bg-soft);
+      border: 1px solid var(--border-subtle);
+      box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.9),
+        0 0 0 1px rgba(255, 255, 255, 0.04);
+      overflow: hidden;
+    }
+
+    .hero-badge {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+    }
+
+    .hero-panel {
+      border-radius: 18px;
+      padding: 14px 14px 12px;
+      background: linear-gradient(135deg, #05060a, #101320);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      margin-bottom: 10px;
+    }
+
+    .hero-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .hero-dot-row {
+      display: flex;
+      gap: 4px;
+    }
+
+    .hero-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .hero-dot:nth-child(1) { background: #ff5f57; }
+    .hero-dot:nth-child(2) { background: #ffbd2e; }
+    .hero-dot:nth-child(3) { background: #28c840; }
+
+    .hero-panel-title {
+      font-size: 0.77rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .hero-panel-body {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+      font-size: 0.76rem;
+    }
+
+    .metric {
+      padding: 8px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .metric-label {
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .metric-value {
+      font-weight: 600;
+    }
+
+    .hero-glow-orb {
+      position: absolute;
+      inset: 40% -40% auto;
+      height: 140%;
+      filter: blur(40px);
+      opacity: 0.4;
+      background:
+        radial-gradient(circle at 20% 0, rgba(79, 209, 197, 0.6) 0, transparent 50%),
+        radial-gradient(circle at 80% 10%, rgba(129, 140, 248, 0.4) 0, transparent 55%);
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    /* セクション共通 */
+    section {
+      margin-bottom: 80px;
+    }
+
+    .section-label {
+      font-size: 0.82rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .section-title {
+      font-size: 1.6rem;
+      margin: 0 0 20px;
+    }
+
+    .section-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.8fr);
+      gap: 28px;
+    }
+
+    .pill-heading {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(0, 0, 0, 0.45);
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .card {
+      padding: 18px 18px 16px;
+      border-radius: 18px;
+      background: radial-gradient(circle at 0 0, rgba(79, 209, 197, 0.18), transparent 60%),
+        var(--card);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.9);
+    }
+
+    .card-muted {
+      background: var(--bg-soft);
+    }
+
+    .card-title {
+      font-size: 1rem;
+      margin: 0 0 8px;
+    }
+
+    .card-body {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .bullet-list {
+      margin: 8px 0 0;
+      padding-left: 1.1rem;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .bullet-list li {
+      margin: 4px 0;
+    }
+
+    .quote {
+      margin-top: 14px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border-left: 3px solid var(--accent);
+      background: rgba(0, 0, 0, 0.55);
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .quote span {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .badge-inline {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(79, 209, 197, 0.5);
+      color: var(--accent);
+      font-size: 0.78rem;
+      margin-left: 6px;
+    }
+
+    .muted-small {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .two-col-list {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 14px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: rgba(0, 0, 0, 0.5);
+      font-size: 0.78rem;
+      margin-right: 6px;
+      margin-top: 4px;
+    }
+
+    /* スクロール進捗バー */
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), #9ae6b4);
+      box-shadow: 0 0 12px rgba(79, 209, 197, 0.9);
+      transform-origin: left center;
+      z-index: 20;
+    }
+
+    /* フッター */
+    footer {
+      padding: 20px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(12px);
+    }
+
+    /* ===== スクロール時のフェードインアニメーション ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition:
+        opacity 500ms ease-out,
+        transform 500ms ease-out;
+    }
+
+    .reveal.in-view {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 120ms; }
+    .reveal-delay-2 { transition-delay: 220ms; }
+    .reveal-delay-3 { transition-delay: 320ms; }
+
+    /* レスポンシブ */
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .hero-visual {
+        order: -1;
+      }
+
+      .section-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .shell {
+        padding-inline: 16px;
+      }
+
+      .hero {
+        margin-bottom: 56px;
+      }
+
+      section {
+        margin-bottom: 64px;
+      }
+    }
+  </style>
+</head>
+<body class="page">
+  <!-- スクロール進捗バー -->
+  <div class="progress" id="progress-bar"></div>
+
+  <div class="shell">
+    <!-- トップバー -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark"></div>
+        <div>
+          <div class="brand-text-main">ORDER FLOW DX</div>
+          <div class="brand-text-sub">Paperless &amp; Automation</div>
+        </div>
+      </div>
+      <div class="tagline">提案資料｜受注フローDX</div>
+    </header>
+
+    <!-- ヒーローセクション -->
+    <section class="hero">
+      <div class="hero-text reveal">
+        <div class="hero-kicker">Proposal</div>
+        <h1 class="hero-title">
+          紙に縛られた受注フローを、<br />
+          <span>「入力と検索のいらない業務」</span>に変える。
+        </h1>
+        <p class="hero-sub">
+          現在、受注業務はFAX・メールからの印刷と紙管理が前提となり、
+          当日／後日発送の仕分けや、各社バラバラのフォーマットへの手入力など、
+          「探す・入力する」作業に多くの時間が割かれています。<br />
+          この提案では、顧客側の運用は変えずに、社内だけで完結するDXにより、
+          受注フローを根本からスリムにします。
+        </p>
+
+        <div class="hero-meta">
+          <div class="hero-pill">顧客側の運用変更なし</div>
+          <div class="hero-pill">予算 50 万円以内で実現可能</div>
+          <div class="hero-pill">年間運用コスト 約 6～7 万円</div>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#issues">
+            <button class="btn-primary" type="button">
+              現状の課題から見る
+              <span>↓</span>
+            </button>
+          </a>
+          <a href="#to-be">
+            <button class="btn-ghost" type="button">
+              To-Be モデルへジャンプ
+            </button>
+          </a>
+          <a href="#effect">
+            <button class="btn-ghost" type="button">
+              効果試算を見る
+            </button>
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-visual reveal reveal-delay-1">
+        <div class="hero-glow-orb"></div>
+        <div class="hero-badge">社内完結DX｜業務フロー再設計</div>
+
+        <div class="hero-panel">
+          <div class="hero-panel-header">
+            <div class="hero-dot-row">
+              <div class="hero-dot"></div>
+              <div class="hero-dot"></div>
+              <div class="hero-dot"></div>
+            </div>
+            <div class="hero-panel-title">Current vs Future</div>
+          </div>
+          <div class="hero-panel-body">
+            <strong>Before：</strong> FAX → 印刷 → 紙仕分け → 手入力 → 検索できない<br />
+            <strong>After：</strong> FAXをPDF受信 → AI OCRで自動データ化 → RPAで自動連携
+          </div>
+          <div class="hero-metrics">
+            <div class="metric">
+              <div class="metric-label">紙仕分け・探す時間</div>
+              <div class="metric-value">▲ 大幅削減</div>
+            </div>
+            <div class="metric">
+              <div class="metric-label">入力作業の負荷</div>
+              <div class="metric-value">▲ 自動化</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-panel card-muted" style="margin-top: 8px;">
+          <div class="hero-panel-body">
+            「紙から解放され、入力と探す時間を大幅削減する受注フロー」へ。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 現状の課題 -->
+    <section id="issues" class="reveal reveal-delay-1">
+      <div class="section-label">Section 01</div>
+      <h2 class="section-title">現状の課題と、その背景</h2>
+
+      <div class="section-grid">
+        <div>
+          <div class="pill-heading">
+            <span class="pill-dot"></span>
+            現状の課題
+          </div>
+          <div class="card">
+            <h3 class="card-title">紙と手作業に依存した受注フロー</h3>
+            <ul class="bullet-list">
+              <li>受注は FAX・メール → 印刷 → 紙管理が前提</li>
+              <li>当日／後日発送の紙仕分けが大量に発生</li>
+              <li>各社フォーマットがバラバラで、手入力の負担が大きい</li>
+              <li>検索機能がなく、紙を「探す・確認する」時間が多い</li>
+            </ul>
+            <p class="muted-small">
+              結果として、担当者は「情報を探すこと」と「同じ情報を何度も入力すること」に多くの時間を奪われています。
+            </p>
+          </div>
+        </div>
+
+        <div class="reveal reveal-delay-2">
+          <div class="pill-heading">
+            <span class="pill-dot"></span>
+            改善の方向性
+          </div>
+          <div class="card card-muted">
+            <h3 class="card-title">“紙からの解放” を軸にした設計</h3>
+            <ul class="bullet-list">
+              <li>ペーパーレスFAX<br />→ 印刷ゼロ・紙仕分けゼロ・検索可能な状態へ</li>
+              <li>AI OCR（非定型対応）<br />→ 手書き・バラバラな注文書でも必要項目を自動でデータ抽出</li>
+              <li>受注データの自動整理<br />→ 当日／後日発送の自動振り分け、社内共有を容易に</li>
+            </ul>
+            <div class="quote">
+              ねらいは、<span>「紙から解放され、入力と探す時間を大幅削減する受注フロー」</span>に変えること。<br />
+              現場のオペレーションを守りつつ、裏側の情報処理だけをスマートにします。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- To-Be 改善案 -->
+    <section id="to-be" class="reveal">
+      <div class="section-label">Section 02</div>
+      <h2 class="section-title">改善案 (To-Be)：顧客側を変えずに、社内だけで完結するDX</h2>
+
+      <div class="section-grid">
+        <div>
+          <div class="pill-heading">
+            <span class="pill-dot"></span>
+            具体的なステップ
+          </div>
+          <div class="card">
+            <h3 class="card-title">3ステップで実現する受注DX</h3>
+            <ol class="bullet-list" style="list-style: decimal;">
+              <li>
+                インプット情報をデジタル化する。<br />
+                → FAX受信を紙ではなく <strong>PDF</strong> で受信するよう複合機の設定変更
+              </li>
+              <li>
+                デジタル化された情報を OCR 機能でデータ化する。<br />
+                → <strong>AI OCR</strong> を含むシステム導入が必要
+              </li>
+              <li>
+                データ化された必要情報を関連システムと連携させる。<br />
+                → <strong>RPA（例：Power Automate Desktop）</strong> の導入が必要
+              </li>
+            </ol>
+            <p class="muted-small">
+              年間運用コストは
+              <span class="badge-inline">約 6～7 万円</span><br />
+              システム導入・構築を含めても、
+              <span class="badge-inline">予算 50 万円以内での実現が可能</span>
+              と想定しています。
+            </p>
+          </div>
+        </div>
+
+        <div class="reveal reveal-delay-2">
+          <div class="pill-heading">
+            <span class="pill-dot"></span>
+            データ化によるメリット
+          </div>
+          <div class="card card-muted">
+            <h3 class="card-title">「業務効率化」と「新しい付加価値」の両立</h3>
+            <div class="two-col-list">
+              <div>
+                <strong>① 管理・検索の効率化</strong>
+                <ul class="bullet-list">
+                  <li>受注データを電子化することで、検索性が飛躍的に向上</li>
+                  <li>ペーパーレス化により、保管スペース・印刷コストを削減</li>
+                  <li>過去の受注履歴も、すぐに横断的に参照可能</li>
+                </ul>
+              </div>
+              <div>
+                <strong>② データの二次利用・分析</strong>
+                <ul class="bullet-list">
+                  <li>販売傾向分析や需要予測などの集計・分析が容易に</li>
+                  <li>「よく売れる組み合わせ」「繁忙期」「得意先」などが可視化</li>
+                  <li>将来的な価格戦略や在庫戦略への活用が可能</li>
+                </ul>
+              </div>
+            </div>
+            <p class="muted-small">
+              単なる「紙の削減」に留まらず、<strong>意思決定に使えるデータの基盤</strong>が整うことで、
+              中長期の利益改善にもつながります。
+            </p>
+            <div>
+              <span class="tag"># ペーパーレス</span>
+              <span class="tag"># AI OCR</span>
+              <span class="tag"># RPA 連携</span>
+              <span class="tag"># 需要予測</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- まとめ -->
+    <section class="reveal reveal-delay-1">
+      <div class="section-label">Section 03</div>
+      <h2 class="section-title">まとめ：受注フローDXで目指す状態</h2>
+      <div class="card">
+        <h3 class="card-title">“紙から解放された受注フロー” がもたらすもの</h3>
+        <ul class="bullet-list">
+          <li>紙の印刷・仕分け・保管・探索にかかっていた時間を大幅に削減</li>
+          <li>手入力や転記ミスを減らし、現場のストレスとリスクを軽減</li>
+          <li>受注データを資産として蓄積し、販売傾向分析・需要予測に活用</li>
+          <li>顧客側のフローはそのままに、社内だけで完結する形でDXを実現</li>
+        </ul>
+        <div class="quote">
+          本提案では、<span>「今のやり方を否定せずに、裏側だけを賢くする」</span>
+          ことを大切にしています。<br />
+          現場の手触り感を残しながら、着実にムダを削り、データ活用の土台を整えていくアプローチです。
+        </div>
+      </div>
+    </section>
+
+    <!-- 効果試算（概算） -->
+    <section id="effect" class="reveal reveal-delay-1">
+      <div class="section-label">Section 04</div>
+      <h2 class="section-title">効果試算（概算）：投資対効果のイメージ</h2>
+
+      <div class="section-grid">
+        <!-- 前提条件 -->
+        <div>
+          <div class="pill-heading">
+            <span class="pill-dot"></span>
+            試算の前提条件（例）
+          </div>
+          <div class="card">
+            <h3 class="card-title">一日の受注処理と工数</h3>
+            <ul class="bullet-list">
+              <li>FAX・メールからの受注件数：<strong>30件 / 日</strong></li>
+              <li>現状の処理時間（印刷・仕分け・手入力・検索）：
+                <strong>10分 / 件</strong></li>
+              <li>DX後の処理時間（確認中心の運用）：<strong>4分 / 件</strong></li>
+              <li>営業日数：<strong>20日 / 月（年間 240日）</strong></li>
+              <li>人件費換算：<strong>2,000円 / 時間</strong>（総人件費ベースのイメージ）</li>
+            </ul>
+            <p class="muted-small">
+              実際の件数や人件費によって数値は変動しますが、ここでは
+              「中くらいのボリューム感」を想定した一例として記載しています。
+            </p>
+          </div>
+        </div>
+
+        <!-- 試算結果 -->
+        <div class="reveal reveal-delay-2">
+          <div class="pill-heading">
+            <span class="pill-dot"></span>
+            試算結果（概算）
+          </div>
+          <div class="card card-muted">
+            <h3 class="card-title">年間でどれくらい効果が出るか</h3>
+            <ul class="bullet-list">
+              <li>
+                現状：30件 × 10分 ＝ <strong>300分（5時間）/ 日</strong>
+              </li>
+              <li>
+                DX後：30件 × 4分 ＝ <strong>120分（2時間）/ 日</strong>
+              </li>
+              <li>
+                削減できる作業時間：<strong>3時間 / 日</strong>
+              </li>
+              <li>
+                年間削減時間：3時間 × 240日 ＝ <strong>720時間 / 年</strong>
+              </li>
+              <li>
+                人件費換算：720時間 × 2,000円 ＝
+                <strong>約 144万円 / 年 の削減効果</strong>
+              </li>
+            </ul>
+            <p class="muted-small">
+              導入コストを、<strong>初期導入費 50万円＋年間運用費 7万円（計 約57万円）</strong>とした場合、<br />
+              年間削減効果 約144万円 と比較すると、
+              <span class="badge-inline">およそ5か月前後で投資回収が可能</span>
+              というイメージになります。
+            </p>
+            <div class="quote">
+              実際には件数・人件費・運用方法によって変動しますが、<br />
+              <span>「1年以内に十分な投資回収が見込める規模感」</span>であることがポイントです。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    受注フローDX 提案ページ｜サンプルWebプレゼン
+  </footer>
+
+  <script>
+    // スクロール進捗バー
+    const progressBar = document.getElementById("progress-bar");
+    function updateProgress() {
+      const scrollTop = window.scrollY || window.pageYOffset;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      progressBar.style.width = progress + "%";
+    }
+    window.addEventListener("scroll", updateProgress);
+    updateProgress();
+
+    // スクロール時フェードイン
+    const revealEls = document.querySelectorAll(".reveal");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("in-view");
+            // 一度表示した要素は監視対象から外す
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      {
+        threshold: 0.15
+      }
+    );
+    revealEls.forEach((el) => observer.observe(el));
+  </script>
+</body>
+</html>
